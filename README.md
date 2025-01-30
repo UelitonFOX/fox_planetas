@@ -1,11 +1,13 @@
 # 🌍 Aplicativo - Planetas (CRUD com Flutter e SQLite)
 
 ## 📌 Sobre o Projeto
+
 Este aplicativo foi desenvolvido como parte da atividade do **Talento Tech 12 - Desenvolvimento de Aplicativos Móveis**. Ele implementa um sistema **CRUD (Create, Read, Update, Delete)** para gerenciamento de informações sobre planetas, utilizando **Flutter** e **SQLite**.
 
 ---
 
 ## 🛠️ Tecnologias Utilizadas
+
 - **Linguagem:** Dart
 - **Framework:** Flutter
 - **Banco de Dados:** SQLite
@@ -15,16 +17,18 @@ Este aplicativo foi desenvolvido como parte da atividade do **Talento Tech 12 - 
 ---
 
 ## 🔥 Funcionalidades do Aplicativo
+
 ✅ **Cadastrar** um novo planeta (Nome, Distância do Sol, Tamanho e Apelido opcional)  
 ✅ **Listar** planetas cadastrados  
 ✅ **Visualizar detalhes** de um planeta cadastrado  
 ✅ **Editar** as informações de um planeta  
 ✅ **Excluir** planetas com **confirmação antes da exclusão**  
-✅ **Persistência** dos dados no banco SQLite  
+✅ **Persistência** dos dados no banco SQLite
 
 ---
 
 ## 🎨 Interface do Usuário (UI)
+
 - **Tela inicial:** Exibe a lista de planetas cadastrados.
 - **Tela de Cadastro/Edição:** Permite adicionar ou modificar um planeta.
 - **Tela de Detalhes:** Mostra todas as informações cadastradas do planeta.
@@ -36,17 +40,20 @@ Este aplicativo foi desenvolvido como parte da atividade do **Talento Tech 12 - 
 ## 🔧 Como Executar o Projeto
 
 ### **1️⃣ Clonar o repositório**
+
 ```bash
-git clone https://github.com/seu-usuario/app_planetas.git
-cd app_planetas
+git clone https://github.com/UelitonFOX/fox_planetas
+cd fox_planetas
 ```
 
 ### **2️⃣ Instalar as dependências**
+
 ```bash
 flutter pub get
 ```
 
 ### **3️⃣ Rodar o aplicativo no emulador/dispositivo**
+
 ```bash
 flutter run
 ```
@@ -55,29 +62,19 @@ flutter run
 
 ---
 
-## 📸 Capturas de Tela
-### 🎬 Tela Inicial
-![Tela Inicial](https://via.placeholder.com/600x300.png?text=Lista+de+Planetas)
-
-### 🌍 Tela de Cadastro
-![Tela de Cadastro](https://via.placeholder.com/600x300.png?text=Cadastro+de+Planeta)
-
-### 📜 Tela de Detalhes
-![Tela de Detalhes](https://via.placeholder.com/600x300.png?text=Detalhes+do+Planeta)
-
----
-
 ## 🏆 Requisitos Atendidos
+
 ✅ **CRUD completo** com validação dos campos  
 ✅ **Banco de Dados SQLite** para persistência  
 ✅ **Código modular e organizado seguindo o padrão MVC**  
 ✅ **Comentários explicativos no código**  
 ✅ **Confirmação antes de excluir um planeta**  
-✅ **Deploy no GitHub + Vídeo de demonstração**  
+✅ **Deploy no GitHub + Vídeo de demonstração**
 
 ---
 
 ## 📂 Estrutura do Projeto
+
 ```
 app_planetas/
 │── lib/
@@ -98,19 +95,22 @@ app_planetas/
 ---
 
 ## 📺 Vídeo de Demonstração
+
 🔗 Assista ao vídeo de demonstração do aplicativo no YouTube: **[Clique aqui](https://youtube.com/seu-video)**
 
 ---
 
 ## 📎 Links
-🔗 **Repositório no GitHub:** [Clique aqui](https://github.com/seu-usuario/app_planetas)  
-🔗 **Vídeo de Demonstração:** [Clique aqui](https://youtube.com/seu-video)  
+
+🔗 **Repositório no GitHub:** [Clique aqui](https://github.com/UelitonFOX/fox_planetas)  
+🔗 **Vídeo de Demonstração:** [Clique aqui](https://youtube.com/seu-video)
 
 ---
 
 ## 📌 Autor
+
 👨‍💻 Desenvolvido por **Seu Nome**  
-📧 Contato: [seu-email@email.com](mailto:seu-email@email.com)  
+📧 Contato: [ueliton.talento.tech@gmail.com](ueliton.talento.tech@gmail.com)  
 🚀 Projeto criado para o **Talento Tech 12 - Desenvolvimento de Aplicativos Móveis**
 
 ---
