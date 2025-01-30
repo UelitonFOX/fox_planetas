@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'controles/controle_planeta.dart';
 import 'modelos/planeta.dart';
-import 'telas/tela_planeta.dart';
 import 'telas/tela_detalhes_planeta.dart';
+import 'telas/tela_planeta.dart';
+import 'telas/tela_splash.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Aplicativo - Planeta'),
+      home: const TelaSplash(),
     );
   }
 }
@@ -99,22 +100,23 @@ class _MyHomePageState extends State<MyHomePage> {
   /// Exibe um alerta para confirmar a exclusão de um planeta
   Future<bool> _mostrarDialogoConfirmacao() async {
     return await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Confirmação"),
-        content: const Text("Tem certeza que deseja excluir este planeta?"),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text("Cancelar"),
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text("Confirmação"),
+            content: const Text("Tem certeza que deseja excluir este planeta?"),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text("Cancelar"),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text("Excluir"),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text("Excluir"),
-          ),
-        ],
-      ),
-    ) ?? false;
+        ) ??
+        false;
   }
 
   /// Exclui um planeta após confirmação do usuário
