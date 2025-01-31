@@ -22,7 +22,6 @@ dependencies:
   path: ^1.9.0
   google_fonts: ^6.1.0
   animated_text_kit: ^4.2.3
-  gsform: ^0.3.7
 
 dev_dependencies:
   flutter_test:
@@ -36,5 +35,3 @@ flutter:
   assets:
     - assets/logos/talento_tech_logo.png
     - assets/logos/talento_tech_text.png
-    - assets/images/A_cosmic_background_with_stars_and_nebulae_in_spac.png
-
