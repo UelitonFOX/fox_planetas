@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-
 import '../controles/controle_planeta.dart';
 import '../modelos/planeta.dart';
 
-// Tela de cadastro/edição de planetas
 class TelaPlaneta extends StatefulWidget {
-  final bool isIncluir; // Indica se a tela está no modo de inclusão
-  final Planeta planeta; // Objeto Planeta para edição/cadastro
-  final Function() onFinalizado; // Callback para atualizar a lista
+  final bool isIncluir;
+  final Planeta planeta;
+  final Function() onFinalizado;
 
   const TelaPlaneta({
     super.key,
@@ -23,7 +21,7 @@ class TelaPlaneta extends StatefulWidget {
 class _TelaPlanetaState extends State<TelaPlaneta> {
   final _formKey = GlobalKey<FormState>(); // Chave para o formulário
 
-  // Controladores para os campos de entrada
+  // Controladores para capturar entrada de dados
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _tamanhoController = TextEditingController();
   final TextEditingController _distanciaController = TextEditingController();
@@ -34,37 +32,28 @@ class _TelaPlanetaState extends State<TelaPlaneta> {
 
   @override
   void initState() {
-    super.initState();
     _planeta = widget.planeta;
-
-    // Preenchendo os campos com os dados do planeta (se houver)
     _nomeController.text = _planeta.nome;
     _tamanhoController.text = _planeta.tamanho.toString();
     _distanciaController.text = _planeta.distancia.toString();
     _apelidoController.text = _planeta.apelido ?? '';
+    super.initState();
   }
 
-  // Função para salvar os dados do formulário
+  /// Submete o formulário após validação
   void _submitForm() {
     if (_formKey.currentState == null) return;
 
     if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save(); // Salva os dados no objeto _planeta
-
-      // Verifica se é um novo cadastro ou uma edição e executa a ação correspondente
-      widget.isIncluir
-          ? _controlePlaneta.inserirPlaneta(_planeta)
-          : _controlePlaneta.alterarPlaneta(_planeta);
-
-      // Exibe uma mensagem de sucesso
+      _formKey.currentState!.save();
+      widget.isIncluir ? _controlePlaneta.inserirPlaneta(_planeta) : _controlePlaneta.alterarPlaneta(_planeta);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Planeta ${widget.isIncluir ? 'adicionado' : 'alterado'} com sucesso!'),
         ),
       );
-
-      Navigator.of(context).pop(); // Fecha a tela
-      widget.onFinalizado(); // Atualiza a lista de planetas
+      Navigator.of(context).pop();
+      widget.onFinalizado();
     }
   }
 
@@ -73,36 +62,31 @@ class _TelaPlanetaState extends State<TelaPlaneta> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple,
-        title: Text(
-          widget.isIncluir ? 'Adicionar Planeta' : 'Editar Planeta',
-          style: const TextStyle(
-            color: Colors.white,
+        backgroundColor: Colors.white, // AppBar com fundo branco
+        elevation: 0, // Sem elevação para um visual mais limpo
+        centerTitle: true, // Centraliza o título
+        title: const Text(
+          'Aplicativo - Planetas',
+          style: TextStyle(
+            color: Colors.grey, // Título cinza
             fontWeight: FontWeight.bold,
-            fontSize: 22,
+            fontSize: 26, // Tamanho de fonte maior
           ),
         ),
-        centerTitle: true,
-        elevation: 4,
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF000428), Color(0xFF004e92)], // Gradiente azul espacial
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
+      body: SingleChildScrollView(  // Permite que a tela seja rolada, ideal para telas pequenas
         padding: const EdgeInsets.all(20),
         child: Form(
           key: _formKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction, // Valida ao interagir com os campos
+          autovalidateMode: AutovalidateMode.onUserInteraction, // Garante que a validação aconteça
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Campo de entrada para Nome do Planeta
               _buildInputField(
                 controller: _nomeController,
-                label: 'Nome',
+                label: 'Nome do Planeta',
+                required: true,  // Indica que o campo é obrigatório
                 validator: (value) {
                   if (value == null || value.isEmpty || value.length < 3) {
                     return 'Nome precisa ter pelo menos 3 caracteres';
@@ -113,29 +97,20 @@ class _TelaPlanetaState extends State<TelaPlaneta> {
                   _planeta.nome = value!;
                 },
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 16),
+              
+              // Campo de entrada para Distância do Planeta
               _buildInputField(
-                controller: _tamanhoController,
-                label: 'Tamanho (km)',
+                controller: _distanciaController,
+                label: 'Distância (km) *',
+                required: true,
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty || double.tryParse(value) == null) {
                     return 'Informe um valor numérico válido';
                   }
-                  return null;
-                },
-                onSaved: (value) {
-                  _planeta.tamanho = double.parse(value!);
-                },
-              ),
-              const SizedBox(height: 10),
-              _buildInputField(
-                controller: _distanciaController,
-                label: 'Distância (km)',
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty || double.tryParse(value) == null) {
-                    return 'Informe um valor numérico válido';
+                  if (double.parse(value) <= 0) {
+                    return 'A distância deve ser maior que zero';
                   }
                   return null;
                 },
@@ -143,7 +118,30 @@ class _TelaPlanetaState extends State<TelaPlaneta> {
                   _planeta.distancia = double.parse(value!);
                 },
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 16),
+              
+              // Campo de entrada para Tamanho do Planeta
+              _buildInputField(
+                controller: _tamanhoController,
+                label: 'Tamanho (km) *',
+                required: true,
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value == null || value.isEmpty || double.tryParse(value) == null) {
+                    return 'Informe um valor numérico válido';
+                  }
+                  if (double.parse(value) <= 0) {
+                    return 'O tamanho deve ser maior que zero';
+                  }
+                  return null;
+                },
+                onSaved: (value) {
+                  _planeta.tamanho = double.parse(value!);
+                },
+              ),
+              const SizedBox(height: 16),
+              
+              // Campo de entrada para Apelido do Planeta (opcional)
               _buildInputField(
                 controller: _apelidoController,
                 label: 'Apelido',
@@ -151,22 +149,45 @@ class _TelaPlanetaState extends State<TelaPlaneta> {
                   _planeta.apelido = value;
                 },
               ),
-              const SizedBox(height: 20),
-              ElevatedButton.icon(
-                onPressed: _submitForm,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurpleAccent,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                  textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+              const SizedBox(height: 24),
+              
+              // Botões "Salvar" e "Cancelar"
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center, // Centraliza os botões
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: _submitForm,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF0639E2), // Cor azul do Talento Tech
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                      textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    icon: const Icon(Icons.save, color: Colors.white),
+                    label: const Text('Salvar'),
                   ),
-                ),
-                icon: const Icon(Icons.save, color: Colors.white),
-                label: const Text('Salvar'),
+                  const SizedBox(width: 16), // Espaçamento entre os botões
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red, // Cor vermelha
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                      textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    icon: const Icon(Icons.cancel, color: Colors.white),
+                    label: const Text('Cancelar'),
+                  ),
+                ],
               ),
-              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -174,10 +195,11 @@ class _TelaPlanetaState extends State<TelaPlaneta> {
     );
   }
 
-  // Método auxiliar para criar campos de entrada padronizados
+  /// Função para construir campos de entrada reutilizáveis
   Widget _buildInputField({
     required TextEditingController controller,
     required String label,
+    bool required = false,
     TextInputType keyboardType = TextInputType.text,
     String? Function(String?)? validator,
     void Function(String?)? onSaved,
@@ -185,23 +207,17 @@ class _TelaPlanetaState extends State<TelaPlaneta> {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
-      style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+      style: const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold), // Fonte preta
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+        labelStyle: const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold), // Cor da label preta
         filled: true,
-        fillColor: Colors.black.withAlpha((0.5 * 255).toInt()),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+        fillColor: Colors.white, // Fundo branco
+        contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+        border: const OutlineInputBorder(
+          borderSide: BorderSide.none, // Remover bordas
         ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Colors.white),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Colors.deepPurpleAccent, width: 2),
-          borderRadius: BorderRadius.circular(12),
-        ),
+        suffixIcon: required ? const Icon(Icons.star, color: Colors.red) : null, // Asterisco para campos obrigatórios
       ),
       validator: validator,
       onSaved: onSaved,

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../main.dart'; // Importa a tela principal para navegação
+import '../main.dart';
 
 class TelaSplash extends StatelessWidget {
   const TelaSplash({super.key});
@@ -10,54 +9,71 @@ class TelaSplash extends StatelessWidget {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-          builder: (context) =>
-              const MyHomePage(title: "Aplicativo - Planeta")),
+        builder: (context) => const MyHomePage(),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () =>
-          _navegarParaHome(context), // Detecta toque na tela para avançar
+      onTap: () => _navegarParaHome(context), // Detecta toque na tela para avançar
       child: Scaffold(
-        backgroundColor: Colors.white, // Fundo branco para destacar a logo
-        body: Center(
+        backgroundColor: Colors.white,
+        body: Center( // Garante que tudo fique centralizado
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset("assets/logos/talento_tech_logo.png",
-                  width: 120), // Exibe a logo do Talento Tech
-              const SizedBox(height: 16),
-              Image.asset("assets/logos/talento_tech_text.png",
-                  width: 180), // Exibe o nome do projeto
-              const SizedBox(height: 24),
-              const Text(
-                "Desenvolvido por Ueliton Fermino",
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black54),
+              // Logo do curso
+              Image.asset(
+                'assets/logos/talento_tech_logo.png',
+                width: 120,
+                height: 120,
               ),
-              const Text(
-                "Curso Talento Tech - PR",
-                style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black54),
+              const SizedBox(height: 10),
+              // Nome do curso
+              Image.asset(
+                'assets/logos/talento_tech_text.png',
+                width: 160,
               ),
-              const SizedBox(height: 32),
-              const Icon(Icons.touch_app,
-                  size: 50, color: Colors.deepPurple), // Ícone indicando toque
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
+              // Nome fixo do app (agora centralizado corretamente)
               const Text(
-                "Toque em qualquer lugar para iniciar",
+                'APP PLANETAS',
+                textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87),
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 30),
+              // Ícone de toque e mensagem
+              Column(
+                children: [
+                  const Icon(
+                    Icons.touch_app,
+                    size: 30,
+                    color: Colors.deepPurple,
+                  ),
+                  const SizedBox(height: 5),
+                  const Text(
+                    'Toque para iniciar',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 14, color: Colors.grey),
+                  ),
+                ],
               ),
             ],
+          ),
+        ),
+        // Rodapé com assinatura discreta
+        bottomNavigationBar: const Padding(
+          padding: EdgeInsets.only(bottom: 10),
+          child: Text(
+            'Desenvolvido por Ueliton Fermino\nCurso Talento Tech - PR',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 12, color: Colors.grey),
           ),
         ),
       ),

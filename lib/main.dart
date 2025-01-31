@@ -1,10 +1,9 @@
+import 'package:app_planeta/controles/controle_planeta.dart';
+import 'package:app_planeta/modelos/planeta.dart';
+import 'package:app_planeta/telas/tela_detalhes_planeta.dart';
+import 'package:app_planeta/telas/tela_planeta.dart';
+import 'package:app_planeta/telas/tela_splash.dart';
 import 'package:flutter/material.dart';
-
-import 'controles/controle_planeta.dart';
-import 'modelos/planeta.dart';
-import 'telas/tela_detalhes_planeta.dart';
-import 'telas/tela_planeta.dart';
-import 'telas/tela_splash.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,19 +16,18 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Planetas',
+      title: 'App Planetas',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const TelaSplash(),
+      home: const TelaSplash(), // Inicia com a tela Splash
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-  final String title;
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -45,7 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _atualizarPlanetas();
   }
 
-  /// Método responsável por atualizar a lista de planetas cadastrados
+  /// Atualiza a lista de planetas no banco de dados
   Future<void> _atualizarPlanetas() async {
     final resultado = await _controlePlaneta.lerPlanetas();
     setState(() {
@@ -132,45 +130,62 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple,
-        title: Text(
-          widget.title,
-          style: const TextStyle(
-            color: Colors.white,
+        backgroundColor: Colors.white, // AppBar com fundo branco
+        elevation: 0, // Sem elevação para um visual mais limpo
+        centerTitle: true, // Centraliza o título
+        title: const Text(
+          'Aplicativo - Planetas',
+          style: TextStyle(
+            color: Colors.grey, // Título cinza
             fontWeight: FontWeight.bold,
-            fontSize: 22,
+            fontSize: 26, // Tamanho de fonte maior
           ),
         ),
-        elevation: 4,
-        centerTitle: true,
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF000428), Color(0xFF004e92)], // Azul espacial
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: ListView.builder(
-          itemCount: _planetas.length,
-          itemBuilder: (context, index) {
-            final planeta = _planetas[index];
-            return _buildPlanetCard(planeta);
-          },
-        ),
+      body: Stack(
+        children: [
+          _buildBackground(), // Fundo branco
+          _planetas.isEmpty ? _buildEmptyMessage() : _buildContent(), // Exibe conteúdo ou mensagem de vazio
+        ],
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           _incluirPlaneta(context);
         },
-        backgroundColor: Colors.deepPurpleAccent,
+        backgroundColor: const Color(0xFF0639E2),
         icon: const Icon(Icons.add, color: Colors.white),
         label: const Text(
           'Novo Planeta',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            shadows: [
+              Shadow(color: Colors.black, offset: Offset(2, 2), blurRadius: 3), // Sombra no texto do botão
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  /// Constrói o fundo branco
+  Widget _buildBackground() {
+    return Positioned.fill( // Preenche toda a área do fundo
+      child: Container(
+        color: Colors.white, // Fundo branco
+      ),
+    );
+  }
+
+  /// Constrói a lista de planetas na tela principal
+  Widget _buildContent() {
+    return ListView.builder(
+      shrinkWrap: true, // Evita que o ListView ocupe todo o espaço
+      itemCount: _planetas.length,
+      itemBuilder: (context, index) {
+        final planeta = _planetas[index];
+        return _buildPlanetCard(planeta);
+      },
     );
   }
 
@@ -182,13 +197,13 @@ class _MyHomePageState extends State<MyHomePage> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
-      color: Colors.black.withAlpha((0.6 * 255).toInt()),
+      color: const Color(0xFFE0E0E0), // Cor neutra para os cards
       child: ListTile(
         contentPadding: const EdgeInsets.all(16),
         title: Text(
           planeta.nome,
           style: const TextStyle(
-            color: Colors.white,
+            color: Colors.black, // Texto preto para o nome
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
@@ -196,10 +211,10 @@ class _MyHomePageState extends State<MyHomePage> {
         subtitle: planeta.apelido != null && planeta.apelido!.isNotEmpty
             ? Text(
                 planeta.apelido!,
-                style: const TextStyle(color: Colors.white70, fontSize: 16),
+                style: const TextStyle(color: Colors.black54, fontSize: 16),
               )
             : null,
-        leading: const Icon(Icons.public, color: Colors.white),
+        leading: const Icon(Icons.public, color: Colors.black), // Ícone de planeta restaurado
         onTap: () => _verDetalhesPlaneta(context, planeta),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
@@ -214,6 +229,16 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// Exibe uma mensagem quando não há planetas cadastrados
+  Widget _buildEmptyMessage() {
+    return Center(
+      child: Text(
+        'Nenhum planeta cadastrado',
+        style: TextStyle(fontSize: 20, color: Colors.grey),
       ),
     );
   }
