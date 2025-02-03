@@ -220,7 +220,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
-              icon: const Icon(Icons.edit, color: Colors.amberAccent),
+              icon: const Icon(Icons.edit, color: Color.fromARGB(255, 39, 187, 51)),
               onPressed: () => _alterarPlaneta(context, planeta),
             ),
             IconButton(
