@@ -56,50 +56,53 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   /// **Abre a tela de inclusão de um novo planeta**
-  void _incluirPlaneta(BuildContext context) {
-    Navigator.push(
+  void _incluirPlaneta(BuildContext context) async {
+    final resultado = await Navigator.push(
       context,
-      PageRouteBuilder(
-        pageBuilder: (_, __, ___) => TelaPlaneta(
+      MaterialPageRoute(
+        builder: (_) => TelaPlaneta(
           isIncluir: true,
           planeta: Planeta.vazio(),
           onFinalizado: _atualizarPlanetas,
         ),
-        transitionsBuilder: (_, anim, __, child) {
-          return FadeTransition(opacity: anim, child: child);
-        },
       ),
     );
+
+    if (resultado == true) {
+      _atualizarPlanetas();
+    }
   }
 
   /// **Abre a tela de edição de um planeta existente**
-  void _alterarPlaneta(BuildContext context, Planeta planeta) {
-    Navigator.push(
+  void _alterarPlaneta(BuildContext context, Planeta planeta) async {
+    final resultado = await Navigator.push(
       context,
-      PageRouteBuilder(
-        pageBuilder: (_, __, ___) => TelaPlaneta(
+      MaterialPageRoute(
+        builder: (_) => TelaPlaneta(
           isIncluir: false,
           planeta: planeta,
           onFinalizado: _atualizarPlanetas,
         ),
-        transitionsBuilder: (_, anim, __, child) {
-          return ScaleTransition(scale: anim, child: child);
-        },
       ),
     );
+
+    if (resultado == true) {
+      _atualizarPlanetas();
+    }
   }
 
   /// **Exibe os detalhes de um planeta**
-  void _verDetalhesPlaneta(BuildContext context, Planeta planeta) {
-    Navigator.push(
+  void _verDetalhesPlaneta(BuildContext context, Planeta planeta) async {
+    final resultado = await Navigator.push(
       context,
-      PageRouteBuilder(
-        pageBuilder: (_, __, ___) => TelaDetalhesPlaneta(planeta: planeta),
-        transitionsBuilder: (_, anim, __, child) {
-          return FadeTransition(opacity: anim, child: child);
-        },
+      MaterialPageRoute(
+        builder: (_) => TelaDetalhesPlaneta(planeta: planeta),
       ),
     );
+
+    if (resultado == true) {
+      _atualizarPlanetas(); // Atualiza a lista de planetas ao retornar
+    }
   }
 
   /// **Exibe um alerta de confirmação antes de excluir um planeta**

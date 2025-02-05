@@ -74,19 +74,31 @@ class TelaDetalhesPlaneta extends StatelessWidget {
     );
   }
 
-  /// **Exclui o planeta e volta para a tela principal**
-void _excluirPlaneta(BuildContext context) async {
-  bool confirmar = await _mostrarDialogoConfirmacao(context);
-  
-  if (confirmar) {
-    await _controlePlaneta.excluirPlaneta(planeta.id!);
+  /// **Exclui o planeta, exibe a mensagem de confirmação e atualiza a tela principal**
+  void _excluirPlaneta(BuildContext context) async {
+    bool confirmar = await _mostrarDialogoConfirmacao(context);
 
-    // Verifica se o widget ainda está montado antes de chamar Navigator.pop()
-    if (context.mounted) {
-      Navigator.pop(context); // Fecha a tela de detalhes e volta para a principal
+    if (confirmar) {
+      await _controlePlaneta.excluirPlaneta(planeta.id!);
+
+      if (context.mounted) {
+        // Exibe mensagem de sucesso
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "Planeta excluído com sucesso!",
+              style: GoogleFonts.nunito(color: Colors.white, fontSize: 16),
+            ),
+            backgroundColor: Colors.redAccent,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+
+        // Fecha a tela de detalhes e volta para a tela principal, passando um sinal para atualizar a lista
+        Navigator.pop(context, true);
+      }
     }
   }
-}
 
   /// **Mostra um diálogo de confirmação antes de excluir**
   Future<bool> _mostrarDialogoConfirmacao(BuildContext context) async {
