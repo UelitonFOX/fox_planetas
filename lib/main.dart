@@ -10,7 +10,7 @@ void main() {
   runApp(const MyApp());
 }
 
-/// Classe principal do aplicativo
+/// **Classe principal do aplicativo**
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -22,14 +22,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
-        scaffoldBackgroundColor: Colors.black, // Fundo preto para uniformidade
+        scaffoldBackgroundColor: Colors.black, // Mantendo fundo uniforme
       ),
       home: const TelaSplash(), // Tela inicial do app
     );
   }
 }
 
-/// Página principal do app, onde os planetas são listados
+/// **Página principal do app, onde os planetas são listados**
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
 
@@ -47,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _atualizarPlanetas();
   }
 
-  /// Atualiza a lista de planetas armazenados no banco de dados
+  /// **Atualiza a lista de planetas armazenados no banco de dados**
   Future<void> _atualizarPlanetas() async {
     final resultado = await _controlePlaneta.lerPlanetas();
     setState(() {
@@ -55,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  /// Abre a tela de inclusão de um novo planeta
+  /// **Abre a tela de inclusão de um novo planeta**
   void _incluirPlaneta(BuildContext context) {
     Navigator.push(
       context,
@@ -72,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  /// Abre a tela de edição de um planeta existente
+  /// **Abre a tela de edição de um planeta existente**
   void _alterarPlaneta(BuildContext context, Planeta planeta) {
     Navigator.push(
       context,
@@ -89,7 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  /// Exibe os detalhes de um planeta
+  /// **Exibe os detalhes de um planeta**
   void _verDetalhesPlaneta(BuildContext context, Planeta planeta) {
     Navigator.push(
       context,
@@ -102,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  /// Exibe um alerta de confirmação antes de excluir um planeta
+  /// **Exibe um alerta de confirmação antes de excluir um planeta**
   Future<bool> _mostrarDialogoConfirmacao() async {
     return await showDialog(
           context: context,
@@ -124,16 +124,31 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ],
           ),
-        ) ??
+        ) ?? 
         false;
   }
 
-  /// Exclui um planeta do banco de dados
+  /// **Exclui um planeta do banco de dados com confirmação e feedback visual**
   void _excluirPlaneta(int id) async {
     bool confirmar = await _mostrarDialogoConfirmacao();
     if (confirmar) {
       await _controlePlaneta.excluirPlaneta(id);
       _atualizarPlanetas();
+
+      /// ✅ **Correção para evitar erro do BuildContext após um await**
+      if (!mounted) return;
+
+      /// **Exibe mensagem de sucesso após a exclusão**
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Planeta excluído com sucesso!",
+            style: GoogleFonts.nunito(color: Colors.white, fontSize: 16),
+          ),
+          backgroundColor: Colors.redAccent,
+          duration: const Duration(seconds: 2),
+        ),
+      );
     }
   }
 
@@ -141,7 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.grey[900], // Padrão cinza escuro aplicado
+        backgroundColor: Colors.grey[900], // Mantendo padrão de fundo cinza escuro
         elevation: 4,
         centerTitle: true,
         title: Text(
@@ -171,7 +186,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  /// Constrói a lista de planetas
+  /// **Constrói a lista de planetas**
   Widget _buildContent() {
     return ListView.builder(
       padding: const EdgeInsets.all(16),
@@ -183,7 +198,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  /// Constrói um card para exibir informações de um planeta na lista
+  /// **Constrói um card para exibir informações de um planeta**
   Widget _buildPlanetCard(Planeta planeta) {
     return Card(
       elevation: 6,
@@ -233,7 +248,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  /// Exibe uma mensagem quando não há planetas cadastrados
+  /// **Exibe mensagem quando não há planetas cadastrados**
   Widget _buildEmptyMessage() {
     return Center(
       child: Text(
