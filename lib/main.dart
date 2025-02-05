@@ -4,11 +4,13 @@ import 'package:app_planeta/telas/tela_detalhes_planeta.dart';
 import 'package:app_planeta/telas/tela_planeta.dart';
 import 'package:app_planeta/telas/tela_splash.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
+/// Classe principal do aplicativo
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -18,14 +20,16 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'App Planetas',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: Colors.black, // Fundo preto para uniformidade
       ),
-      home: const TelaSplash(), // Inicia com a tela Splash
+      home: const TelaSplash(), // Tela inicial do app
     );
   }
 }
 
+/// Página principal do app, onde os planetas são listados
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
 
@@ -43,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _atualizarPlanetas();
   }
 
-  /// Atualiza a lista de planetas no banco de dados
+  /// Atualiza a lista de planetas armazenados no banco de dados
   Future<void> _atualizarPlanetas() async {
     final resultado = await _controlePlaneta.lerPlanetas();
     setState(() {
@@ -51,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  /// Navega para a tela de inclusão de um novo planeta
+  /// Abre a tela de inclusão de um novo planeta
   void _incluirPlaneta(BuildContext context) {
     Navigator.push(
       context,
@@ -68,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  /// Navega para a tela de edição de um planeta existente
+  /// Abre a tela de edição de um planeta existente
   void _alterarPlaneta(BuildContext context, Planeta planeta) {
     Navigator.push(
       context,
@@ -85,31 +89,38 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  /// Exibe detalhes do planeta em uma nova tela
+  /// Exibe os detalhes de um planeta
   void _verDetalhesPlaneta(BuildContext context, Planeta planeta) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => TelaDetalhesPlaneta(planeta: planeta),
+      PageRouteBuilder(
+        pageBuilder: (_, __, ___) => TelaDetalhesPlaneta(planeta: planeta),
+        transitionsBuilder: (_, anim, __, child) {
+          return FadeTransition(opacity: anim, child: child);
+        },
       ),
     );
   }
 
-  /// Exibe um alerta para confirmar a exclusão de um planeta
+  /// Exibe um alerta de confirmação antes de excluir um planeta
   Future<bool> _mostrarDialogoConfirmacao() async {
     return await showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text("Confirmação"),
-            content: const Text("Tem certeza que deseja excluir este planeta?"),
+            backgroundColor: Colors.grey[900],
+            title: const Text("Confirmação", style: TextStyle(color: Colors.white)),
+            content: const Text(
+              "Tem certeza que deseja excluir este planeta?",
+              style: TextStyle(color: Colors.white70),
+            ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: const Text("Cancelar"),
+                child: const Text("Cancelar", style: TextStyle(color: Colors.blue)),
               ),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(true),
-                child: const Text("Excluir"),
+                child: const Text("Excluir", style: TextStyle(color: Colors.red)),
               ),
             ],
           ),
@@ -117,7 +128,7 @@ class _MyHomePageState extends State<MyHomePage> {
         false;
   }
 
-  /// Exclui um planeta após confirmação do usuário
+  /// Exclui um planeta do banco de dados
   void _excluirPlaneta(int id) async {
     bool confirmar = await _mostrarDialogoConfirmacao();
     if (confirmar) {
@@ -130,57 +141,40 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white, // AppBar com fundo branco
-        elevation: 0, // Sem elevação para um visual mais limpo
-        centerTitle: true, // Centraliza o título
-        title: const Text(
+        backgroundColor: Colors.grey[900], // Padrão cinza escuro aplicado
+        elevation: 4,
+        centerTitle: true,
+        title: Text(
           'Aplicativo - Planetas',
-          style: TextStyle(
-            color: Colors.grey, // Título cinza
+          style: GoogleFonts.poppins(
+            color: Colors.white,
             fontWeight: FontWeight.bold,
-            fontSize: 26, // Tamanho de fonte maior
+            fontSize: 24,
           ),
         ),
       ),
-      body: Stack(
-        children: [
-          _buildBackground(), // Fundo branco
-          _planetas.isEmpty ? _buildEmptyMessage() : _buildContent(), // Exibe conteúdo ou mensagem de vazio
-        ],
-      ),
+      body: _planetas.isEmpty ? _buildEmptyMessage() : _buildContent(),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           _incluirPlaneta(context);
         },
-        backgroundColor: const Color(0xFF0639E2),
+        backgroundColor: Colors.blueAccent,
         icon: const Icon(Icons.add, color: Colors.white),
         label: const Text(
           'Novo Planeta',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
-            shadows: [
-              Shadow(color: Colors.black, offset: Offset(2, 2), blurRadius: 3), // Sombra no texto do botão
-            ],
           ),
         ),
       ),
     );
   }
 
-  /// Constrói o fundo branco
-  Widget _buildBackground() {
-    return Positioned.fill( // Preenche toda a área do fundo
-      child: Container(
-        color: Colors.white, // Fundo branco
-      ),
-    );
-  }
-
-  /// Constrói a lista de planetas na tela principal
+  /// Constrói a lista de planetas
   Widget _buildContent() {
     return ListView.builder(
-      shrinkWrap: true, // Evita que o ListView ocupe todo o espaço
+      padding: const EdgeInsets.all(16),
       itemCount: _planetas.length,
       itemBuilder: (context, index) {
         final planeta = _planetas[index];
@@ -189,38 +183,44 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  /// Constrói um card de exibição para cada planeta na lista
+  /// Constrói um card para exibir informações de um planeta na lista
   Widget _buildPlanetCard(Planeta planeta) {
     return Card(
-      elevation: 8,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      color: const Color(0xFFE0E0E0), // Cor neutra para os cards
+      elevation: 6,
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      color: Colors.grey[900],
       child: ListTile(
         contentPadding: const EdgeInsets.all(16),
         title: Text(
           planeta.nome,
-          style: const TextStyle(
-            color: Colors.black, // Texto preto para o nome
+          style: GoogleFonts.nunito(
+            color: Colors.white,
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
-        subtitle: planeta.apelido != null && planeta.apelido!.isNotEmpty
-            ? Text(
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (planeta.apelido != null && planeta.apelido!.isNotEmpty)
+              Text(
                 planeta.apelido!,
-                style: const TextStyle(color: Colors.black54, fontSize: 16),
-              )
-            : null,
-        leading: const Icon(Icons.public, color: Colors.black), // Ícone de planeta restaurado
+                style: GoogleFonts.nunito(color: Colors.white70, fontSize: 16),
+              ),
+            Text(
+              'Distância do Sol: ${planeta.distanciaDoSol} UA',
+              style: GoogleFonts.nunito(color: Colors.white70, fontSize: 16),
+            ),
+          ],
+        ),
+        leading: const Icon(Icons.public, color: Colors.white70, size: 28),
         onTap: () => _verDetalhesPlaneta(context, planeta),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
-              icon: const Icon(Icons.edit, color: Color.fromARGB(255, 39, 187, 51)),
+              icon: const Icon(Icons.edit, color: Colors.blueAccent),
               onPressed: () => _alterarPlaneta(context, planeta),
             ),
             IconButton(
@@ -238,7 +238,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Center(
       child: Text(
         'Nenhum planeta cadastrado',
-        style: TextStyle(fontSize: 20, color: Colors.grey),
+        style: GoogleFonts.nunito(fontSize: 20, color: Colors.white70),
       ),
     );
   }

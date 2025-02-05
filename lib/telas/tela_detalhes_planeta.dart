@@ -1,78 +1,158 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../modelos/planeta.dart';
+import '../controles/controle_planeta.dart';
+import 'tela_planeta.dart';
 
+/// **Tela de Detalhes do Planeta**
+/// Exibe informações do planeta e permite edição ou exclusão.
 class TelaDetalhesPlaneta extends StatelessWidget {
   final Planeta planeta;
+  final ControlePlaneta _controlePlaneta = ControlePlaneta(); // Controle para excluir
 
-  const TelaDetalhesPlaneta({super.key, required this.planeta});
+  TelaDetalhesPlaneta({super.key, required this.planeta});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.grey[900], // Mantendo o padrão do design
+        iconTheme: const IconThemeData(color: Colors.white), // Ícone de voltar branco
         title: Text(
           planeta.nome,
-          style: const TextStyle(
+          style: GoogleFonts.poppins(
             color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 22,
+            fontWeight: FontWeight.w600,
+            fontSize: 24,
           ),
         ),
         centerTitle: true,
-        elevation: 4,
+        elevation: 2,
+        actions: [
+          // Ícone de editar no AppBar
+          IconButton(
+            icon: const Icon(Icons.edit, color: Colors.blueAccent),
+            onPressed: () => _editarPlaneta(context),
+          ),
+
+          // Ícone de excluir no AppBar
+          IconButton(
+            icon: const Icon(Icons.delete, color: Colors.redAccent),
+            onPressed: () => _excluirPlaneta(context),
+          ),
+        ],
       ),
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF000428), Color(0xFF004e92)], // Azul espacial
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        padding: const EdgeInsets.all(20),
+        color: Colors.black, // Fundo preto sólido
+        padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildInfoRow("🌍", "Nome:", planeta.nome),
-            _buildInfoRow("🌞", "Distância do Sol:", "${planeta.distancia} km"),
-            _buildInfoRow("📏", "Tamanho:", "${planeta.tamanho} km"),
+            _buildInfoCard(Icons.language, "Nome", planeta.nome),
+            _buildInfoCard(Icons.wb_sunny, "Distância do Sol", "${planeta.distanciaDoSol} UA"),
+            _buildInfoCard(Icons.straighten, "Tamanho", "${planeta.tamanho} km"),
             if (planeta.apelido != null && planeta.apelido!.isNotEmpty)
-              _buildInfoRow("🏷️", "Apelido:", planeta.apelido!),
+              _buildInfoCard(Icons.label, "Apelido", planeta.apelido!),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildInfoRow(String emoji, String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            emoji,
-            style: const TextStyle(fontSize: 24),
+  /// **Abre a tela de edição do planeta**
+  void _editarPlaneta(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TelaPlaneta(
+          isIncluir: false,
+          planeta: planeta,
+          onFinalizado: () {
+            Navigator.pop(context, true); // Atualiza a tela ao voltar
+          },
+        ),
+      ),
+    );
+  }
+
+  /// **Exclui o planeta e volta para a tela principal**
+void _excluirPlaneta(BuildContext context) async {
+  bool confirmar = await _mostrarDialogoConfirmacao(context);
+  
+  if (confirmar) {
+    await _controlePlaneta.excluirPlaneta(planeta.id!);
+
+    // Verifica se o widget ainda está montado antes de chamar Navigator.pop()
+    if (context.mounted) {
+      Navigator.pop(context); // Fecha a tela de detalhes e volta para a principal
+    }
+  }
+}
+
+  /// **Mostra um diálogo de confirmação antes de excluir**
+  Future<bool> _mostrarDialogoConfirmacao(BuildContext context) async {
+    return await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            backgroundColor: Colors.grey[900],
+            title: const Text("Confirmação", style: TextStyle(color: Colors.white)),
+            content: const Text(
+              "Tem certeza que deseja excluir este planeta?",
+              style: TextStyle(color: Colors.white70),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text("Cancelar", style: TextStyle(color: Colors.blueAccent)),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text("Excluir", style: TextStyle(color: Colors.redAccent)),
+              ),
+            ],
           ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: RichText(
-              text: TextSpan(
-                style: const TextStyle(color: Colors.white, fontSize: 18),
+        ) ??
+        false;
+  }
+
+  /// **Cria um card estilizado para exibir cada informação do planeta**
+  Widget _buildInfoCard(IconData icon, String label, String value) {
+    return Card(
+      color: Colors.grey[900],
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 4,
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Icon(icon, color: Colors.blueAccent, size: 28),
+            const SizedBox(width: 15),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextSpan(
-                    text: "$label ",
-                    style: const TextStyle(
+                  Text(
+                    label,
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
+                      color: Colors.white70,
                     ),
                   ),
-                  TextSpan(text: value),
+                  const SizedBox(height: 4),
+                  Text(
+                    value,
+                    style: GoogleFonts.nunito(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white,
+                    ),
+                  ),
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

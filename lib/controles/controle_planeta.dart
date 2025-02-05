@@ -1,76 +1,76 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-
 import '../modelos/planeta.dart';
 
+/// **ControlePlaneta: Gerencia o banco de dados local**
+/// Contém métodos para criar, ler, inserir, atualizar e excluir planetas no banco SQLite.
 class ControlePlaneta {
   static Database? _bd; // Instância única do banco de dados
 
-  // Garante acesso ao banco de dados, inicializando-o caso necessário
+  /// **Garante o acesso ao banco de dados**
+  /// - Se o banco já estiver aberto, retorna a instância existente.
+  /// - Caso contrário, inicializa e retorna uma nova instância.
   Future<Database> get bd async {
     if (_bd != null) return _bd!;
     _bd = await _initBD('planetas.db');
     return _bd!;
   }
 
-  // Inicializa o banco de dados
-  Future<Database> _initBD(String localArquivo) async {
+  /// **Inicializa o banco de dados SQLite**
+  Future<Database> _initBD(String nomeArquivo) async {
     final caminhoBD = await getDatabasesPath();
-    final caminho = join(caminhoBD, localArquivo);
+    final caminhoCompleto = join(caminhoBD, nomeArquivo);
     return await openDatabase(
-      caminho,
+      caminhoCompleto,
       version: 1,
-      onCreate: _criarBD, // Cria a tabela ao inicializar o banco
+      onCreate: _criarBD,
     );
   }
 
-  // Cria a tabela 'planetas' no banco de dados
+  /// **Cria a tabela 'planetas' no banco de dados**
   Future<void> _criarBD(Database bd, int versao) async {
     const sql = '''
-		CREATE TABLE planetas (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			nome TEXT NOT NULL,
-			tamanho REAL NOT NULL,
-			distancia REAL NOT NULL,
-			apelido TEXT
-    );
+      CREATE TABLE planetas (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT NOT NULL,
+        tamanho REAL NOT NULL,
+        distancia REAL NOT NULL,
+        apelido TEXT
+      );
     ''';
     await bd.execute(sql);
   }
 
-  // Retorna uma lista de planetas do banco de dados
+  /// **Retorna todos os planetas armazenados no banco**
   Future<List<Planeta>> lerPlanetas() async {
     final db = await bd;
     final resultado = await db.query('planetas');
     return resultado.map((item) => Planeta.fromMap(item)).toList();
   }
 
-  // Insere um novo planeta no banco de dados
+  /// **Insere um novo planeta no banco**
   Future<int> inserirPlaneta(Planeta planeta) async {
     final db = await bd;
-    return await db.insert(
-      'planetas',
-      planeta.toMap(),
-    );
+    return await db.insert('planetas', planeta.toMap());
   }
 
-  // Altera os dados de um planeta existente
+  /// **Atualiza os dados de um planeta existente**
   Future<int> alterarPlaneta(Planeta planeta) async {
     final db = await bd;
     return db.update(
       'planetas',
       planeta.toMap(),
-      where: 'id = ?', // Define o planeta a ser alterado pelo ID
+      where: 'id = ?',
       whereArgs: [planeta.id],
     );
   }
 
-  // Exclui um planeta do banco de dados pelo ID
+  /// **Exclui um planeta do banco pelo ID**
   Future<int> excluirPlaneta(int id) async {
     final db = await bd;
     return await db.delete(
       'planetas',
-      where: 'id = ?', // Define o planeta a ser excluído pelo ID
+      where: 'id = ?',
       whereArgs: [id],
     );
   }
