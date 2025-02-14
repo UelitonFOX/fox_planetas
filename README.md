@@ -87,15 +87,9 @@ app_planetas/
 
 ---
 
-## 🎦 Vídeo de Demonstração
-📚 Assista ao vídeo de demonstração no YouTube: **[Clique aqui](https://youtube.com/seu-video)**
-
----
 
 ## 📎 Links
-📚 **Repositório no GitHub:** [Clique aqui](https://github.com/seu-usuario/app_planetas)  
-📚 **Vídeo de Demonstração:** [Clique aqui](https://youtube.com/seu-video)  
-
+📚 **Repositório no GitHub:** [Clique aqui](https://github.com/UelitonFOX/fox_planetas)
 ---
 
 ## 🤝 Contribuições
